@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartaoCreditoValido.Domain", "CartaoCreditoValido.Domain\CartaoCreditoValido.Domain.csproj", "{FF2C5B17-49FB-42C1-A15C-85B924FE6290}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartaoCreditoValido.Application", "CartaoCreditoValido.Application\CartaoCreditoValido.Application.csproj", "{BA3E0A87-854D-4C64-A2DE-1313F65D12A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartaoCreditoValido.Infra", "CartaoCreditoValido.Infra\CartaoCreditoValido.Infra.csproj", "{472AA5DE-B6FB-4F25-A8AC-E0F35F311F5B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartaoCreditoValido.WebAPI", "CartaoCreditoValido.WebAPI\CartaoCreditoValido.WebAPI.csproj", "{6AA78DD2-0D91-4994-9784-FDD1152816E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CartaoCreditoValido.Tests", "CartaoCreditoValido.Tests\CartaoCreditoValido.Tests.csproj", "{8F1FB532-E06F-4BD9-9A60-9CFA02E2A502}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FF2C5B17-49FB-42C1-A15C-85B924FE6290}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF2C5B17-49FB-42C1-A15C-85B924FE6290}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF2C5B17-49FB-42C1-A15C-85B924FE6290}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF2C5B17-49FB-42C1-A15C-85B924FE6290}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA3E0A87-854D-4C64-A2DE-1313F65D12A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA3E0A87-854D-4C64-A2DE-1313F65D12A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA3E0A87-854D-4C64-A2DE-1313F65D12A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA3E0A87-854D-4C64-A2DE-1313F65D12A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{472AA5DE-B6FB-4F25-A8AC-E0F35F311F5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{472AA5DE-B6FB-4F25-A8AC-E0F35F311F5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{472AA5DE-B6FB-4F25-A8AC-E0F35F311F5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{472AA5DE-B6FB-4F25-A8AC-E0F35F311F5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AA78DD2-0D91-4994-9784-FDD1152816E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AA78DD2-0D91-4994-9784-FDD1152816E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AA78DD2-0D91-4994-9784-FDD1152816E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AA78DD2-0D91-4994-9784-FDD1152816E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F1FB532-E06F-4BD9-9A60-9CFA02E2A502}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F1FB532-E06F-4BD9-9A60-9CFA02E2A502}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F1FB532-E06F-4BD9-9A60-9CFA02E2A502}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F1FB532-E06F-4BD9-9A60-9CFA02E2A502}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
