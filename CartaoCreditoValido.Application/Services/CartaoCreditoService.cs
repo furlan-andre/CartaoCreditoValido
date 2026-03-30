@@ -1,14 +1,25 @@
-using CartaoCreditoValido.Domain.CartoesCredito.Entities;
+using CartaoCreditoValido.Domain.CartoesCredito.Entidades;
+using CartaoCreditoValido.Domain.CartoesCredito.Repositorios;
 
 namespace CartaoCreditoValido.Application.Services
 {
     public class CartaoCreditoService : ICartaoCreditoService
     {
-        public Task Armazenar(CartaoCredito cartaoCredito, CancellationToken cancellationToken)
+        private readonly ICartaoCreditoRepository _cartaoCreditoRepository;
+
+        public CartaoCreditoService(ICartaoCreditoRepository cartaoCreditoRepository)
         {
-            // TODO: Implementar repositorio
-            cartaoCredito.Id = 1;
-            return default;
+            _cartaoCreditoRepository = cartaoCreditoRepository;
+        }
+
+        public async Task Armazenar(CartaoCredito cartaoCredito, CancellationToken cancellationToken = default)
+        {
+            await _cartaoCreditoRepository.ArmazenarAsync(cartaoCredito);
+        }
+
+        public async Task<CartaoCredito> ObterCartaoCredito(long id, CancellationToken cancellationToken = default)
+        {
+            return await _cartaoCreditoRepository.ObterPorId(id);
         }
     }
 }

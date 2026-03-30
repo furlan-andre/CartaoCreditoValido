@@ -12,7 +12,7 @@ public class RegraAmex : IRegraBandeira
     public bool Valido(long numeroCartao)
     {
         var quantidadeDigitos = numeroCartao.ToString().Length;
-        
+
         if (quantidadeDigitos == 15)
             return true;
 

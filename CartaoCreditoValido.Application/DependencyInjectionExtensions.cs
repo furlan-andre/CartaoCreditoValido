@@ -1,3 +1,4 @@
+using CartaoCreditoValido.Application.Commands.CriarCartaoCredito;
 using CartaoCreditoValido.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,8 +10,7 @@ namespace CartaoCreditoValido.Application
         {
     
             services.AddScoped<ICartaoCreditoService, CartaoCreditoService>();
-            // services.AddScoped<ICommandHandler<CriarCartaoCreditoCommand>, CriarCartaoCreditoCommandHandler>();
-
+            
             return services;
         }
     }

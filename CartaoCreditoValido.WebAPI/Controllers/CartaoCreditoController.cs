@@ -1,5 +1,6 @@
-using CartaoCreditoValido.Application.Services;
-using CartaoCreditoValido.Domain.CartoesCredito.Entities;
+using CartaoCreditoValido.Application.Commands.CriarCartaoCredito;
+using CartaoCreditoValido.Application.Queries.ObterCartaoCreditoPorId;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CartaoCreditoValido.WebAPI.Controllers;
@@ -8,29 +9,36 @@ namespace CartaoCreditoValido.WebAPI.Controllers;
 [Route("[controller]")]
 public class CartaoCreditoController : ControllerBase
 {
-    private readonly ICartaoCreditoService _cartaoCreditoService;
+    private readonly ISender _sender;
 
-    public CartaoCreditoController(ICartaoCreditoService cartaoCreditoService)
+    public CartaoCreditoController(ISender sender)
     {
-        _cartaoCreditoService = cartaoCreditoService;
+        _sender = sender;
     }
 
-    /// <summary>
-    /// Cria e armazena um novo cartão de crédito
-    /// </summary>
-    /// <param name="cartaoCredito">Dados do cartão de crédito a ser criado</param>
-    /// <returns>Status 201 Created se bem-sucedido</returns>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Post([FromBody] CartaoCredito cartaoCredito)
+    public async Task<IActionResult> Post([FromBody] CriarCartaoCreditoRequest request, CancellationToken cancellationToken)
     {
-        // if (cartaoCredito == null)
-        //     return BadRequest("CartãoCredito não pode ser nulo.");
-        //
-        // // await _cartaoCreditoService.Armazenar(cartaoCredito, CancellationToken.None);
-        //
-        // return CreatedAtAction(nameof(Post), cartaoCredito);
-        return Created();
+        var command = new CriarCartaoCreditoCommand(
+            request.NomeCompletoTitular,
+            request.NascimentoTitular,
+            request.NumeroCartao);
+
+        var resultado = await _sender.Send(command, cancellationToken);
+
+        return CreatedAtAction(nameof(ObterPorId), new { id = resultado }, null);
+    }
+
+    [HttpGet("{id:long}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ObterPorId(int id, CancellationToken cancellationToken)
+    {
+        var query = new ObterCartaoCreditoPorIdQuery(id);
+        var resultado = await _sender.Send(query, cancellationToken);
+        
+        return Ok(resultado);
     }
 }

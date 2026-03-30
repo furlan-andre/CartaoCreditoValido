@@ -1,6 +1,6 @@
 using CartaoCreditoValido.Application.Services;
 using CartaoCreditoValido.Domain.CartaoCredito.Validadores;
-using CartaoCreditoValido.Domain.CartoesCredito.Entities;
+using CartaoCreditoValido.Domain.CartoesCredito.Entidades;
 using MediatR;
 
 namespace CartaoCreditoValido.Application.Commands.CriarCartaoCredito;
@@ -28,7 +28,7 @@ public class CriarCartaoCreditoCommandHandler : IRequestHandler<CriarCartaoCredi
             request.NascimentoTitular);
 
         await _service.Armazenar(cartao, cancellationToken);
-        
+
         return cartao.Id;
     }
 }

@@ -1,3 +1,5 @@
+using CartaoCreditoValido.Domain.CartoesCredito;
+
 namespace CartaoCreditoValido.Domain.CartoesCredito.RegrasBandeira;
 
 public interface IRegraBandeira

@@ -1,4 +1,5 @@
 using CartaoCreditoValido.Application;
+using CartaoCreditoValido.Infra;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,7 +7,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddInfrastructureDatabase(builder.Configuration);
 builder.Services.AddApplicationServices();
+builder.Services.AddRespositorios();
 
 var app = builder.Build();
 

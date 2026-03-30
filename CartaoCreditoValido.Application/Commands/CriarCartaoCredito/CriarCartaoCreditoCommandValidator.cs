@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace CartaoCreditoValido.Application.Commands.CriarCartaoCredito;
 
-public class CriarCartaoCreditoCommandValidator    : AbstractValidator<CriarCartaoCreditoCommand>
+public class CriarCartaoCreditoCommandValidator : AbstractValidator<CriarCartaoCreditoCommand>
 {
     public CriarCartaoCreditoCommandValidator()
     {

@@ -11,7 +11,7 @@ public class RegraMasterCard : IRegraBandeira
     public bool Valido(long numeroCartao)
     {
         var quantidadeDigitos = numeroCartao.ToString().Length;
-        
+
         if (quantidadeDigitos == 16)
             return true;
 

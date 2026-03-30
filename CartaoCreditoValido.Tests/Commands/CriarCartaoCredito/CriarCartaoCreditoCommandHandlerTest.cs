@@ -1,7 +1,7 @@
 using CartaoCreditoValido.Application.Commands.CriarCartaoCredito;
 using CartaoCreditoValido.Application.Services;
 using CartaoCreditoValido.Domain.CartaoCredito.Validadores;
-using CartaoCreditoValido.Domain.CartoesCredito.Entities;
+using CartaoCreditoValido.Domain.CartoesCredito.Entidades;
 using FluentAssertions;
 using Moq;
 

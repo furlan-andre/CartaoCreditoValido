@@ -15,7 +15,7 @@ public class RegraVisa : IRegraBandeira
 
         if (quantidadeDigitos == 13 || quantidadeDigitos == 16)
             return true;
-      
+
         return false;
     }
 }
