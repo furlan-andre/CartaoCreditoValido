@@ -9,11 +9,11 @@ namespace CartaoCreditoValido.WebAPI.Controllers;
 [Route("[controller]")]
 public class CartaoCreditoController : ControllerBase
 {
-    private readonly ISender _sender;
+    private readonly IMediator _mediator;
 
-    public CartaoCreditoController(ISender sender)
+    public CartaoCreditoController(IMediator mediator)
     {
-        _sender = sender;
+        _mediator = mediator;
     }
 
     [HttpPost]
@@ -26,18 +26,25 @@ public class CartaoCreditoController : ControllerBase
             request.NascimentoTitular,
             request.NumeroCartao);
 
-        var resultado = await _sender.Send(command, cancellationToken);
-
-        return CreatedAtAction(nameof(ObterPorId), new { id = resultado }, null);
+        var resultado = await _mediator.Send(command, cancellationToken);
+        
+        if(resultado == null)
+            return BadRequest();
+        
+        return CreatedAtAction(nameof(ObterPorId), new { id = resultado.Id }, resultado);
     }
 
     [HttpGet("{id:long}")]
+    [ProducesResponseType(typeof(ObterCartaoCreditoDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> ObterPorId(int id, CancellationToken cancellationToken)
     {
         var query = new ObterCartaoCreditoPorIdQuery(id);
-        var resultado = await _sender.Send(query, cancellationToken);
+        var resultado = await _mediator.Send(query, cancellationToken);
+        
+        if(resultado == null)
+            return NotFound();
         
         return Ok(resultado);
     }

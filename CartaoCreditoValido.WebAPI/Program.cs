@@ -10,6 +10,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddInfrastructureDatabase(builder.Configuration);
 builder.Services.AddApplicationServices();
 builder.Services.AddRespositorios();
+builder.Services.AddMediator();
 
 var app = builder.Build();
 

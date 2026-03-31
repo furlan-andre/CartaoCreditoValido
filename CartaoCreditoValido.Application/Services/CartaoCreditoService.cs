@@ -1,3 +1,5 @@
+using CartaoCreditoValido.Application.Commands.CriarCartaoCredito;
+using CartaoCreditoValido.Application.Queries.ObterCartaoCreditoPorId;
 using CartaoCreditoValido.Domain.CartoesCredito.Entidades;
 using CartaoCreditoValido.Domain.CartoesCredito.Repositorios;
 
@@ -12,14 +14,31 @@ namespace CartaoCreditoValido.Application.Services
             _cartaoCreditoRepository = cartaoCreditoRepository;
         }
 
-        public async Task Armazenar(CartaoCredito cartaoCredito, CancellationToken cancellationToken = default)
+        public async Task<CriarCartaoCreditoDto?> Armazenar(CartaoCredito cartaoCredito, CancellationToken cancellationToken = default)
         {
-            await _cartaoCreditoRepository.ArmazenarAsync(cartaoCredito);
+            var cartaoCreditoArmazenado = await _cartaoCreditoRepository.ArmazenarAsync(cartaoCredito, cancellationToken);
+            
+            var resultado = new CriarCartaoCreditoDto(
+                cartaoCreditoArmazenado.Id,
+                cartaoCreditoArmazenado.NomeCompletoTitular,
+                cartaoCreditoArmazenado.NascimentoTitular,
+                cartaoCreditoArmazenado.NumeroCartao);
+            
+            return resultado;
         }
 
-        public async Task<CartaoCredito> ObterCartaoCredito(long id, CancellationToken cancellationToken = default)
+        public async Task<ObterCartaoCreditoDto?> ObterCartaoCredito(long id, CancellationToken cancellationToken = default)
         {
-            return await _cartaoCreditoRepository.ObterPorId(id);
+            var cartao = await _cartaoCreditoRepository.ObterPorId(id, cancellationToken);
+
+            if (cartao is null)
+                return null;
+            
+            return new ObterCartaoCreditoDto(
+                cartao.Id,
+                cartao.NomeCompletoTitular,
+                cartao.NascimentoTitular,
+                cartao.NumeroCartao);
         }
     }
 }

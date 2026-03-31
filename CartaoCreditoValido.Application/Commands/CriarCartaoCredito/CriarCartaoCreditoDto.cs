@@ -1,8 +1,8 @@
-using MediatR;
-
 namespace CartaoCreditoValido.Application.Commands.CriarCartaoCredito;
 
-public sealed record CriarCartaoCreditoCommand(
+public sealed record CriarCartaoCreditoDto(
+    long Id,
     string NomeCompletoTitular,
     DateOnly NascimentoTitular,
-    long NumeroCartao) : IRequest<CriarCartaoCreditoDto>;
+    long NumeroCartao
+);

@@ -5,7 +5,7 @@ using MediatR;
 
 namespace CartaoCreditoValido.Application.Commands.CriarCartaoCredito;
 
-public class CriarCartaoCreditoCommandHandler : IRequestHandler<CriarCartaoCreditoCommand, long>
+public class CriarCartaoCreditoCommandHandler : IRequestHandler<CriarCartaoCreditoCommand, CriarCartaoCreditoDto>
 {
     private readonly IValidadorNumeroCartao _validadorNumeroCartao;
     private readonly ICartaoCreditoService _service;
@@ -18,7 +18,7 @@ public class CriarCartaoCreditoCommandHandler : IRequestHandler<CriarCartaoCredi
         _service = service;
     }
 
-    public async Task<long> Handle(CriarCartaoCreditoCommand request, CancellationToken cancellationToken)
+    public async Task<CriarCartaoCreditoDto?> Handle(CriarCartaoCreditoCommand request, CancellationToken cancellationToken)
     {
         _validadorNumeroCartao.Validar(request.NumeroCartao);
 
@@ -27,8 +27,8 @@ public class CriarCartaoCreditoCommandHandler : IRequestHandler<CriarCartaoCredi
             request.NomeCompletoTitular,
             request.NascimentoTitular);
 
-        await _service.Armazenar(cartao, cancellationToken);
+        var resultado = await _service.Armazenar(cartao, cancellationToken);
 
-        return cartao.Id;
+        return resultado;
     }
 }

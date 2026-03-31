@@ -14,15 +14,17 @@ namespace CartaoCreditoValido.Infra.Repositories
             _context = context;
         }
 
-        public async Task<CartaoCredito> ObterPorId(long id)
+        public async Task<CartaoCredito?> ObterPorId(long id, CancellationToken cancellationToken = default)
         {
-            return await _context.CartoesCredito.Where(x => x.Id == id).FirstOrDefaultAsync();
+            return await _context.CartoesCredito
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
    
-        public async Task<CartaoCredito> ArmazenarAsync(CartaoCredito cartaoCredito)
+        public async Task<CartaoCredito> ArmazenarAsync(CartaoCredito cartaoCredito, CancellationToken cancellationToken = default)
         {
-            await _context.CartoesCredito.AddAsync(cartaoCredito);
-            await _context.SaveChangesAsync();
+            await _context.CartoesCredito.AddAsync(cartaoCredito, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
             
             return cartaoCredito;
         }

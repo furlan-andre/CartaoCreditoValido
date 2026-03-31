@@ -4,7 +4,7 @@ using MediatR;
 namespace CartaoCreditoValido.Application.Queries.ObterCartaoCreditoPorId;
 
 public sealed class ObterCartaoCreditoPorIdQueryHandler
-    : IRequestHandler<ObterCartaoCreditoPorIdQuery, ObterCartaoCreditoPorIdResponse?>
+    : IRequestHandler<ObterCartaoCreditoPorIdQuery, ObterCartaoCreditoDto?>
 {
     private readonly ICartaoCreditoService _cartaoCreditoService;
 
@@ -13,19 +13,12 @@ public sealed class ObterCartaoCreditoPorIdQueryHandler
         _cartaoCreditoService = cartaoCreditoService;
     }
 
-    public async Task<ObterCartaoCreditoPorIdResponse?> Handle(
+    public async Task<ObterCartaoCreditoDto?> Handle(
         ObterCartaoCreditoPorIdQuery request,
         CancellationToken cancellationToken)
     {
-        var cartao = await _cartaoCreditoService.ObterCartaoCredito(request.Id, cancellationToken);
+        var response = await _cartaoCreditoService.ObterCartaoCredito(request.Id, cancellationToken);
 
-        if (cartao == null)
-            return null;
-        
-        return new ObterCartaoCreditoPorIdResponse(
-            cartao.Id,
-            cartao.NomeCompletoTitular,
-            cartao.NascimentoTitular,
-            cartao.NumeroCartao);
+        return response;
     }
 }

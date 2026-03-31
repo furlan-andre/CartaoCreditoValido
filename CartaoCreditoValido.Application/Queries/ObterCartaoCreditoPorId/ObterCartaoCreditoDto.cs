@@ -1,6 +1,6 @@
 namespace CartaoCreditoValido.Application.Queries.ObterCartaoCreditoPorId;
 
-public sealed record ObterCartaoCreditoPorIdResponse(
+public sealed record ObterCartaoCreditoDto(
     long Id,
     string NomeCompletoTitular,
     DateOnly NascimentoTitular,

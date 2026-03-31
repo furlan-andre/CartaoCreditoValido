@@ -31,10 +31,6 @@ public class CriarCartaoCreditoCommandHandlerTest
             "João Silva",
             new DateOnly(1990, 1, 1),
             4111111111111111);
-        
-        _serviceMock
-            .Setup(s => s.Armazenar(It.IsAny<CartaoCredito>(), CancellationToken.None))
-            .Returns(Task.CompletedTask);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
