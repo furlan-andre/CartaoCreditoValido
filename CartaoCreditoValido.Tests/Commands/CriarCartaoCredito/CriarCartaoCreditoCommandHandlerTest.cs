@@ -1,6 +1,7 @@
 using CartaoCreditoValido.Application.Commands.CriarCartaoCredito;
 using CartaoCreditoValido.Application.Services;
 using CartaoCreditoValido.Domain.CartaoCredito.Validadores;
+using CartaoCreditoValido.Domain.CartoesCredito.Eventos;
 using CartaoCreditoValido.Domain.CartoesCredito.Entidades;
 using FluentAssertions;
 using Moq;
@@ -11,16 +12,28 @@ public class CriarCartaoCreditoCommandHandlerTest
 {
     private readonly Mock<IValidadorNumeroCartao> _validadorNumeroCartaoMock;
     private readonly Mock<ICartaoCreditoService> _serviceMock;
+    private readonly Mock<ICartaoCreditoEventPublisher> _eventPublisherMock;
     private readonly CriarCartaoCreditoCommandHandler _handler;
 
     public CriarCartaoCreditoCommandHandlerTest()
     {
         _validadorNumeroCartaoMock = new Mock<IValidadorNumeroCartao>();
         _serviceMock = new Mock<ICartaoCreditoService>();
+        _eventPublisherMock = new Mock<ICartaoCreditoEventPublisher>();
+
+        _serviceMock
+            .Setup(s => s.Armazenar(It.IsAny<CartaoCredito>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((CartaoCredito cartao, CancellationToken _) =>
+                new CriarCartaoCreditoDto(
+                    cartao.Id,
+                    cartao.NomeCompletoTitular,
+                    cartao.NascimentoTitular,
+                    cartao.NumeroCartao));
 
         _handler = new CriarCartaoCreditoCommandHandler(
             _validadorNumeroCartaoMock.Object,
-            _serviceMock.Object);
+            _serviceMock.Object,
+            _eventPublisherMock.Object);
     }
 
     [Fact]
@@ -42,6 +55,10 @@ public class CriarCartaoCreditoCommandHandlerTest
 
         _serviceMock.Verify(
             s => s.Armazenar(It.IsAny<CartaoCredito>(), It.IsAny<CancellationToken>()),
+            Times.Once);
+
+        _eventPublisherMock.Verify(
+            x => x.PublicarCartaoCriadoAsync(It.IsAny<CartaoCreditoCriadoEvent>(), It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -68,6 +85,10 @@ public class CriarCartaoCreditoCommandHandlerTest
     
         _serviceMock.Verify(
             s => s.Armazenar(It.IsAny<CartaoCredito>(), It.IsAny<CancellationToken>()),
+            Times.Never);
+
+        _eventPublisherMock.Verify(
+            x => x.PublicarCartaoCriadoAsync(It.IsAny<CartaoCreditoCriadoEvent>(), It.IsAny<CancellationToken>()),
             Times.Never);
     }
 }

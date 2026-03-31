@@ -1,8 +1,10 @@
 using CartaoCreditoValido.Application.Commands.CriarCartaoCredito;
+using CartaoCreditoValido.Application.Commons.Behaviors;
 using CartaoCreditoValido.Application.Services;
 using CartaoCreditoValido.Domain.CartaoCredito.Validadores;
 using CartaoCreditoValido.Domain.CartoesCredito.RegrasBandeira;
 using CartaoCreditoValido.Domain.CartoesCredito.Services.Validadores;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CartaoCreditoValido.Application
@@ -26,9 +28,11 @@ namespace CartaoCreditoValido.Application
             services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssemblyContaining<CriarCartaoCreditoCommand>();
+                cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
             });
             
-            // services.AddValidatorsFromAssemblyContaining<CriarCartaoCreditoCommandValidator>();
+            services.AddValidatorsFromAssemblyContaining<CriarCartaoCreditoCommandValidator>();
+            
             return services;
         }
     }

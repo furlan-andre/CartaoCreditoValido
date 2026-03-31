@@ -41,11 +41,27 @@ public class CriarCartaoCreditoCommandValidatorTest
     }
 
     [Fact]
-    public void NaoDevePermitirCommandComNascimentoTitularInvalido()
+    public void NaoDevePermitirCommandSemNascimentoTitular()
     {
         // Arrange
         var command = new CriarCartaoCreditoCommand("João Silva",
             new DateOnly(),
+            1234567890123);
+
+        // Act
+        var result = _validator.TestValidate(command);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.NascimentoTitular)
+            .WithErrorMessage("A data de nascimento do titular é obrigatória.");
+    }
+    
+    [Fact]
+    public void NaoDevePermitirCommandComNascimentoTitularInvalido()
+    {
+        // Arrange
+        var command = new CriarCartaoCreditoCommand("João Silva",
+            DateOnly.FromDateTime(DateTime.Now),
             1234567890123);
 
         // Act

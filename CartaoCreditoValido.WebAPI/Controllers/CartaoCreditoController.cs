@@ -19,7 +19,7 @@ public class CartaoCreditoController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Post([FromBody] CriarCartaoCreditoRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Criar([FromBody] CriarCartaoCreditoRequest request, CancellationToken cancellationToken)
     {
         var command = new CriarCartaoCreditoCommand(
             request.NomeCompletoTitular,
