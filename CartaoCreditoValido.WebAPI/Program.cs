@@ -1,5 +1,6 @@
 using CartaoCreditoValido.Application;
 using CartaoCreditoValido.Infra;
+using CartaoCreditoValido.Infra.Messaging;
 using CartaoCreditoValido.WebAPI.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,12 @@ builder.Services.AddRespositorios();
 builder.Services.AddMediator();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var topologyInitializer = scope.ServiceProvider.GetRequiredService<RabbitMqTopologyInitializer>();
+    await topologyInitializer.InitializeAsync();
+}
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
 

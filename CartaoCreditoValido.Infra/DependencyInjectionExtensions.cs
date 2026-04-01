@@ -39,6 +39,8 @@ namespace CartaoCreditoValido.Infra
             IConfiguration configuration)
         {
             services.Configure<RabbitMqOptions>(configuration.GetSection(RabbitMqOptions.SectionName));
+            services.AddSingleton<RabbitMqTopologyManager>();
+            services.AddSingleton<RabbitMqTopologyInitializer>();
 
             return services;
         }

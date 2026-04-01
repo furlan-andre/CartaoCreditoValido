@@ -9,17 +9,24 @@ namespace CartaoCreditoValido.Infra.Messaging;
 public sealed class RabbitMqCartaoCreditoEventPublisher : ICartaoCreditoEventPublisher
 {
     private readonly RabbitMqOptions _options;
+    private readonly RabbitMqTopologyManager _topologyManager;
 
-    public RabbitMqCartaoCreditoEventPublisher(IOptions<RabbitMqOptions> options)
+    public RabbitMqCartaoCreditoEventPublisher(
+        IOptions<RabbitMqOptions> options,
+        RabbitMqTopologyManager topologyManager)
     {
         _options = options.Value;
+        _topologyManager = topologyManager;
     }
 
     public Task PublicarCartaoCriadoAsync(CartaoCreditoCriadoEvent evento, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var exchangeName = BuildExchangeName(evento.GetType());
+        var exchangeName = _topologyManager.BuildExchangeName(evento.GetType());
+        var queueName = _topologyManager.BuildQueueName(evento.GetType());
+
+        _topologyManager.ConfigurarTopologia(exchangeName, queueName);
 
         var factory = new ConnectionFactory
         {
@@ -31,13 +38,6 @@ public sealed class RabbitMqCartaoCreditoEventPublisher : ICartaoCreditoEventPub
 
         using var connection = factory.CreateConnection();
         using var channel = connection.CreateModel();
-
-        channel.ExchangeDeclare(
-            exchange: exchangeName,
-            type: ExchangeType.Fanout,
-            durable: true,
-            autoDelete: false,
-            arguments: null);
 
         var payload = JsonSerializer.Serialize(evento);
         var body = Encoding.UTF8.GetBytes(payload);
@@ -52,19 +52,6 @@ public sealed class RabbitMqCartaoCreditoEventPublisher : ICartaoCreditoEventPub
             body: body);
 
         return Task.CompletedTask;
-    }
-
-    private string BuildExchangeName(Type eventType)
-    {
-        var name = eventType.Name;
-        if (name.EndsWith("Event", StringComparison.OrdinalIgnoreCase))
-            name = name[..^5];
-
-        var kebab = System.Text.RegularExpressions.Regex
-            .Replace(name, "([a-z0-9])([A-Z])", "$1-$2")
-            .ToLowerInvariant();
-
-        return $"{_options.ExchangePrefix}.{kebab}";
     }
 }
 
