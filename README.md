@@ -1,6 +1,9 @@
 # CartaoCreditoValido
 
-Projeto .NET 8 para validação de cartões de crédito, utilizando arquitetura em camadas.
+Projeto .NET 8 para validação de cartões de crédito, utilizando arquitetura em camadas, RabbitMQ para comunicação assíncrona e XUnit para testes automatizados.
+
+
+> A execução da API é suportada somente via Docker.
 
 ## Estrutura do Projeto
 
@@ -12,45 +15,21 @@ Projeto .NET 8 para validação de cartões de crédito, utilizando arquitetura 
 
 ## Requisitos
 
-- .NET 8.0 ou superior instalado
+- Docker instalado e em execução
 
 ## Como executar
 
-### Compilar a solução
+Execute os comandos abaixo a partir da raiz da solução.
 
-```bash
-# Compilar todos os projetos
-dotnet build
-```
+### Subir a aplicação
 
-### Executar a aplicação
-
-```bash
-# Executar a WebAPI
-dotnet run --project CartaoCreditoValido.WebAPI
+```powershell
+docker compose up --build
 ```
 
 A API estará disponível em:
-- HTTP: `http://localhost:5002`
-- HTTPS: `https://localhost:5001`
-- Swagger: `https://localhost:5001/swagger` (abre automaticamente no navegador)
+- HTTP: `http://localhost:8080`
+- Swagger: `http://localhost:8080/swagger`
 
-### Executar os testes
-
-```bash
-# Executar todos os testes
-dotnet test
-```
-
-### Comandos úteis
-
-```bash
-# Limpar e reconstruir
-dotnet clean && dotnet build
-
-# Executar em modo watch (reinicia automaticamente)
-dotnet watch run --project CartaoCreditoValido.WebAPI
-
-# Executar testes em modo watch
-dotnet watch test
-```
+Serviços auxiliares disponíveis:
+- RabbitMQ Management: `http://localhost:15672`

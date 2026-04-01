@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using RabbitMQ.Client;
 
 namespace CartaoCreditoValido.Infra
 {
@@ -46,34 +48,92 @@ namespace CartaoCreditoValido.Infra
             return services;
         }
 
-        public static async Task EnsureDatabaseUpdatedAsync(
+        public static async Task InitializeDatabaseAsync(
             this IServiceProvider serviceProvider,
             CancellationToken cancellationToken = default)
         {
+            const int maxAttempts = 15;
+            var delay = TimeSpan.FromSeconds(3);
+
             using var scope = serviceProvider.CreateScope();
-            var scopedProvider = scope.ServiceProvider;
-            var logger = scopedProvider.GetRequiredService<ILoggerFactory>()
+            var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>()
                 .CreateLogger("DatabaseStartup");
-            var context = scopedProvider.GetRequiredService<CartaoCreditoContext>();
+            var context = scope.ServiceProvider.GetRequiredService<CartaoCreditoContext>();
 
-            var canConnect = await context.Database.CanConnectAsync(cancellationToken);
-
-            if (!canConnect)
+            for (var attempt = 1; attempt <= maxAttempts; attempt++)
             {
-                logger.LogInformation("Banco indisponível ou inexistente. Aplicando migrations para criação/atualização...");
-                await context.Database.MigrateAsync(cancellationToken);
-                return;
+                try
+                {
+                    await context.Database.MigrateAsync(cancellationToken);
+                    logger.LogInformation("Banco de dados criado/atualizado com sucesso.");
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning(
+                        "Não foi possível criar/migrar o banco de dados (tentativa {Attempt}/{Max}): {Message}",
+                        attempt, maxAttempts, ex.Message);
+                }
+
+                if (attempt < maxAttempts)
+                {
+                    logger.LogInformation("Aguardando SQL Server... nova tentativa em {Seconds}s.", delay.TotalSeconds);
+                    await Task.Delay(delay, cancellationToken);
+                }
             }
 
-            var pendingMigrations = await context.Database.GetPendingMigrationsAsync(cancellationToken);
-            if (pendingMigrations.Any())
+            throw new InvalidOperationException(
+                "Não foi possível criar/migrar o banco de dados após múltiplas tentativas.");
+        }
+
+        public static async Task InitializeRabbitMqAsync(
+            this IServiceProvider serviceProvider,
+            CancellationToken cancellationToken = default)
+        {
+            const int maxAttempts = 15;
+            var delay = TimeSpan.FromSeconds(3);
+
+            using var scope = serviceProvider.CreateScope();
+            var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>()
+                .CreateLogger("RabbitMqStartup");
+            var options = scope.ServiceProvider.GetRequiredService<IOptions<RabbitMqOptions>>().Value;
+
+            for (var attempt = 1; attempt <= maxAttempts; attempt++)
             {
-                logger.LogInformation("Foram encontradas migrations pendentes. Aplicando migrations...");
-                await context.Database.MigrateAsync(cancellationToken);
-                return;
+                try
+                {
+                    var factory = new ConnectionFactory
+                    {
+                        HostName = options.HostName,
+                        Port = options.Port,
+                        UserName = options.UserName,
+                        Password = options.Password,
+                        RequestedConnectionTimeout = TimeSpan.FromSeconds(5)
+                    };
+
+                    using var connection = factory.CreateConnection();
+                    logger.LogInformation("RabbitMQ disponível e pronto para conexão.");
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    logger.LogWarning("RabbitMQ ainda não disponível (tentativa {Attempt}/{Max}): {Message}",
+                        attempt, maxAttempts, ex.Message);
+
+                    if (attempt == maxAttempts)
+                        throw new InvalidOperationException("Não foi possível conectar ao RabbitMQ após múltiplas tentativas.");
+                }
+
+                if (attempt < maxAttempts)
+                {
+                    logger.LogInformation("Aguardando RabbitMQ... nova tentativa em {Seconds}s.", delay.TotalSeconds);
+                    await Task.Delay(delay, cancellationToken);
+                }
             }
 
-            logger.LogInformation("Banco de dados já está atualizado com as migrations.");
+            var topologyInitializer = scope.ServiceProvider.GetRequiredService<RabbitMqTopologyInitializer>();
+            await topologyInitializer.InitializeAsync(cancellationToken);
+            logger.LogInformation("Topologia do RabbitMQ inicializada com sucesso.");
         }
     }
 }
