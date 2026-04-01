@@ -6,6 +6,7 @@ using CartaoCreditoValido.Infra.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace CartaoCreditoValido.Infra
 {
@@ -43,6 +44,36 @@ namespace CartaoCreditoValido.Infra
             services.AddSingleton<RabbitMqTopologyInitializer>();
 
             return services;
+        }
+
+        public static async Task EnsureDatabaseUpdatedAsync(
+            this IServiceProvider serviceProvider,
+            CancellationToken cancellationToken = default)
+        {
+            using var scope = serviceProvider.CreateScope();
+            var scopedProvider = scope.ServiceProvider;
+            var logger = scopedProvider.GetRequiredService<ILoggerFactory>()
+                .CreateLogger("DatabaseStartup");
+            var context = scopedProvider.GetRequiredService<CartaoCreditoContext>();
+
+            var canConnect = await context.Database.CanConnectAsync(cancellationToken);
+
+            if (!canConnect)
+            {
+                logger.LogInformation("Banco indisponível ou inexistente. Aplicando migrations para criação/atualização...");
+                await context.Database.MigrateAsync(cancellationToken);
+                return;
+            }
+
+            var pendingMigrations = await context.Database.GetPendingMigrationsAsync(cancellationToken);
+            if (pendingMigrations.Any())
+            {
+                logger.LogInformation("Foram encontradas migrations pendentes. Aplicando migrations...");
+                await context.Database.MigrateAsync(cancellationToken);
+                return;
+            }
+
+            logger.LogInformation("Banco de dados já está atualizado com as migrations.");
         }
     }
 }

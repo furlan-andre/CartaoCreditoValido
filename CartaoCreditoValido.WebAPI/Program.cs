@@ -16,6 +16,8 @@ builder.Services.AddMediator();
 
 var app = builder.Build();
 
+await app.Services.EnsureDatabaseUpdatedAsync();
+
 using (var scope = app.Services.CreateScope())
 {
     var topologyInitializer = scope.ServiceProvider.GetRequiredService<RabbitMqTopologyInitializer>();

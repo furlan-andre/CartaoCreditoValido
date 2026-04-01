@@ -23,8 +23,8 @@ public sealed class RabbitMqCartaoCreditoEventPublisher : ICartaoCreditoEventPub
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var exchangeName = _topologyManager.BuildExchangeName(evento.GetType());
-        var queueName = _topologyManager.BuildQueueName(evento.GetType());
+        var exchangeName = BuildExchangeName(evento.GetType());
+        var queueName = BuildQueueName(evento.GetType());
 
         _topologyManager.ConfigurarTopologia(exchangeName, queueName);
 
@@ -52,6 +52,24 @@ public sealed class RabbitMqCartaoCreditoEventPublisher : ICartaoCreditoEventPub
             body: body);
 
         return Task.CompletedTask;
+    }
+
+    private string BuildExchangeName(Type eventType)
+    {
+        var name = eventType.Name;
+        if (name.EndsWith("Event", StringComparison.OrdinalIgnoreCase))
+            name = name[..^5];
+
+        var kebab = System.Text.RegularExpressions.Regex
+            .Replace(name, "([a-z0-9])([A-Z])", "$1-$2")
+            .ToLowerInvariant();
+
+        return $"{_options.ExchangePrefix}.{kebab}";
+    }
+
+    private string BuildQueueName(Type eventType)
+    {
+        return $"{BuildExchangeName(eventType)}.queue";
     }
 }
 
