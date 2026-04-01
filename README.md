@@ -33,3 +33,92 @@ A API estará disponível em:
 
 Serviços auxiliares disponíveis:
 - RabbitMQ Management: `http://localhost:15672`
+
+## Endpoints da API
+
+### `POST /CartaoCredito`
+
+Cria um cartão de crédito.
+
+Parâmetros de entrada (body JSON):
+
+```json
+{
+  "nomeCompletoTitular": "string",
+  "nascimentoTitular": "yyyy-MM-dd",
+  "numeroCartao": 1111111111111111
+}
+```
+
+Possíveis retornos:
+
+- `201 Created`
+  - Header `Location`: `http://localhost:8080/CartaoCredito/{id}`
+  - Body:
+
+```json
+{
+  "id": 1,
+  "nomeCompletoTitular": "Andre Teste",
+  "nascimentoTitular": "1990-05-10",
+  "numeroCartao": 1111111111111111
+}
+```
+
+- `400 Bad Request` (validações de entrada ou regra de domínio)
+  - Formato para erro de validação:
+
+```json
+{
+  "messages": [
+	"O número do cartão é obrigatório."
+  ]
+}
+```
+
+  - Formato para exceção de domínio:
+
+```json
+{
+  "message": "Mensagem da regra de domínio"
+}
+```
+
+- `500 Internal Server Error`
+
+```json
+{
+  "message": "Mensagem do erro"
+}
+```
+
+### `GET /CartaoCredito/{id}`
+
+Obtém um cartão de crédito por identificador.
+
+Parâmetros de entrada:
+
+- `id` (path): número inteiro (`long`)
+
+Possíveis retornos:
+
+- `200 OK`
+
+```json
+{
+  "id": 1,
+  "nomeCompletoTitular": "Andre Teste",
+  "nascimentoTitular": "1990-05-10",
+  "numeroCartao": 4111111111111111
+}
+```
+
+- `404 Not Found` (quando não existir registro para o `id` informado)
+- `500 Internal Server Error`
+
+```json
+{
+  "message": "Mensagem do erro"
+}
+```
+
