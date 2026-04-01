@@ -1,6 +1,6 @@
 # CartaoCreditoValido
 
-Projeto .NET 8 para validação de cartões de crédito, utilizando arquitetura em camadas, RabbitMQ para comunicação assíncrona e XUnit para testes automatizados.
+Projeto .NET 8 para validação de cartões de crédito, utilizando arquitetura em camadas, DDD, SQL Server, RabbitMQ para comunicação assíncrona e XUnit para testes automatizados.
 
 
 > A execução da API é suportada somente via Docker.
